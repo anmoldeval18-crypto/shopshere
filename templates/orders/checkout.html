@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Checkout | ShopSphere{% endblock %}
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <h1 class="fw-bold mb-4">Checkout</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <h4 class="fw-semibold mb-3">Shipping Address</h4>
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger">
+                                    {{ form.non_field_errors|join:", " }}
+                                </div>
+                            {% endif %}
+                            <div class="mb-3">
+                                <label class="form-label">Saved Address</label>
+                                {{ form.existing_address }}
+                                {% if form.existing_address.errors %}<div class="text-danger small">{{ form.existing_address.errors|join:", " }}</div>{% endif %}
+                            </div>
+                            <p class="text-muted small">If you do not select a saved address, fill in the new address form below.</p>
+                            <div class="row">
+                                {% for field in form %}
+                                    {% if field.name != 'existing_address' and field.name != 'payment_method' and field.name != 'notes' and field.name != 'save_address' %}
+                                        <div class="col-md-6 {% if field.name == 'address_line_1' or field.name == 'address_line_2' %}col-12{% endif %}">
+                                            <div class="mb-3">
+                                                <label class="form-label">{{ field.label }}</label>
+                                                {{ field }}
+                                                {% if field.errors %}<div class="text-danger small">{{ field.errors|join:", " }}</div>{% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="form-check mb-2">
+                                {{ form.save_address }}
+                                <label class="form-check-label ms-2" for="{{ form.save_address.id_for_label }}">Save this address to my profile</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="fw-semibold mb-3">Payment & Notes</h4>
+                            <div class="mb-4">
+                                <label class="form-label d-block">Payment Method</label>
+                                {% for radio in form.payment_method %}
+                                    <div class="form-check mb-2">
+                                        {{ radio.tag }}
+                                        <label class="form-check-label ms-2" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div>
+                                <label class="form-label">Order Notes</label>
+                                {{ form.notes }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="fw-bold mb-3">Order Summary</h4>
+                            {% for item in cart.items.all %}
+                                <div class="d-flex justify-content-between border-bottom py-2">
+                                    <span>{{ item.product.name }} x {{ item.quantity }}</span>
+                                    <span>Rs. {{ item.total_price }}</span>
+                                </div>
+                            {% endfor %}
+                            <div class="d-flex justify-content-between mt-3">
+                                <span>Subtotal</span>
+                                <span>Rs. {{ subtotal }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Shipping</span>
+                                <span>Rs. {{ shipping_cost }}</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
+                                <span>Total</span>
+                                <span>Rs. {{ grand_total }}</span>
+                            </div>
+                            <button class="btn btn-primary w-100" type="submit">Place Order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

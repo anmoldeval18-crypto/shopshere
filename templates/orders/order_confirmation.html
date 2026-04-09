@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed | ShopSphere{% endblock %}
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body p-5">
+                    <span class="badge bg-success px-3 py-2 mb-3">Order Placed</span>
+                    <h1 class="fw-bold mb-3">Thank you for your order.</h1>
+                    <p class="text-muted mb-4">
+                        Your order <strong>{{ order.order_number }}</strong> has been placed successfully. You can track its status from the My Orders page.
+                    </p>
+                    <div class="row g-3 text-start mb-4">
+                        <div class="col-md-4"><div class="summary-box"><small>Status</small><h6>{{ order.get_status_display }}</h6></div></div>
+                        <div class="col-md-4"><div class="summary-box"><small>Payment</small><h6>{{ order.get_payment_method_display }}</h6></div></div>
+                        <div class="col-md-4"><div class="summary-box"><small>Total</small><h6>Rs. {{ order.total_amount }}</h6></div></div>
+                    </div>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="{% url 'orders:order_detail' order.order_number %}" class="btn btn-primary">View Order</a>
+                        <a href="{% url 'products:product_list' %}" class="btn btn-outline-primary">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} | ShopSphere{% endblock %}
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <div class="product-detail-image shadow-sm">
+                    {% if product.primary_image and product.primary_image.image %}
+                        <img src="{{ product.primary_image.image.url }}" class="img-fluid rounded-4" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="placeholder-product detail-placeholder d-flex align-items-center justify-content-center rounded-4">
+                            <span>{{ product.category.name }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <span class="badge bg-light text-dark mb-3">{{ product.category.name }}</span>
+                <h1 class="fw-bold">{{ product.name }}</h1>
+                <div class="d-flex gap-3 align-items-center mb-3">
+                    <span class="fs-3 fw-bold text-primary">Rs. {{ product.effective_price }}</span>
+                    {% if product.discount_price %}
+                        <span class="text-muted text-decoration-line-through">Rs. {{ product.price }}</span>
+                        <span class="badge bg-warning text-dark">{{ product.discount_percentage }}% OFF</span>
+                    {% endif %}
+                </div>
+                <p class="text-muted">{{ product.description }}</p>
+                <div class="d-flex flex-wrap gap-3 mb-4">
+                    <span class="badge bg-primary-subtle text-primary">{{ product.average_rating }} ★ average</span>
+                    <span class="badge bg-success-subtle text-success">{{ product.review_count }} reviews</span>
+                    {% if product.is_in_stock %}
+                        <span class="badge bg-success">In Stock ({{ product.stock }})</span>
+                    {% else %}
+                        <span class="badge bg-danger">Out of Stock</span>
+                    {% endif %}
+                </div>
+
+                {% if request.user.is_authenticated %}
+                    <div class="d-flex gap-3 flex-wrap">
+                        <form method="post" action="{% url 'cart:add_to_cart' product.id %}" class="d-flex gap-2">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control quantity-input">
+                            <button type="submit" class="btn btn-warning" {% if not product.is_in_stock %}disabled{% endif %}>Add to Cart</button>
+                        </form>
+                        <form method="post" action="{% url 'wishlist:toggle_wishlist' product.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-primary">Add to Wishlist</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-primary">Login to purchase</a>
+                {% endif %}
+
+                {% if product.specifications %}
+                    <div class="mt-5">
+                        <h4 class="fw-semibold">Specifications</h4>
+                        <p class="text-muted mb-0">{{ product.specifications|linebreaks }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <h3 class="fw-bold mb-4">Customer Reviews</h3>
+                {% for review in reviews %}
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <h6 class="mb-0">{{ review.title }}</h6>
+                                    <small class="text-muted">by {{ review.user.username }} on {{ review.created_at|date:"d M Y" }}</small>
+                                </div>
+                                <span class="badge bg-warning text-dark">{{ review.rating }}/5</span>
+                            </div>
+                            <p class="mb-0 text-muted">{{ review.comment }}</p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="alert alert-info">No reviews yet. Be the first to share feedback after purchase.</div>
+                {% endfor %}
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-3">Write a Review</h4>
+                        {% if request.user.is_authenticated %}
+                            {% if user_review_exists %}
+                                <div class="alert alert-success mb-0">You have already reviewed this product.</div>
+                            {% elif can_review %}
+                                <form method="post" action="{% url 'reviews:add_review' product.slug %}">
+                                    {% csrf_token %}
+                                    {% for field in review_form %}
+                                        <div class="mb-3">
+                                            <label class="form-label">{{ field.label }}</label>
+                                            {{ field }}
+                                            {% if field.errors %}<div class="text-danger small">{{ field.errors|join:", " }}</div>{% endif %}
+                                        </div>
+                                    {% endfor %}
+                                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                                </form>
+                            {% else %}
+                                <div class="alert alert-secondary mb-0">Reviews are allowed after purchasing this product.</div>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-secondary mb-0">Login to write a review after your purchase.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <h3 class="fw-bold mb-4">Related Products</h3>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            {% for product in related_products %}
+                {% include "includes/product_card.html" %}
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">No related products found.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

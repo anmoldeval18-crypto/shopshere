@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}My Profile | ShopSphere{% endblock %}
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h3 class="fw-bold mb-3">Profile Details</h3>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="profile">
+                            {% for field in user_form %}
+                                <div class="mb-3">
+                                    <label class="form-label">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}<div class="text-danger small">{{ field.errors|join:", " }}</div>{% endif %}
+                                </div>
+                            {% endfor %}
+                            {% for field in profile_form %}
+                                <div class="mb-3">
+                                    <label class="form-label">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}<div class="text-danger small">{{ field.errors|join:", " }}</div>{% endif %}
+                                </div>
+                            {% endfor %}
+                            <button class="btn btn-primary" type="submit">Update Profile</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="fw-bold mb-0">Saved Addresses</h3>
+                            <span class="badge bg-light text-dark">{{ addresses|length }} saved</span>
+                        </div>
+                        <div class="row g-3">
+                            {% for address in addresses %}
+                                <div class="col-md-6">
+                                    <div class="border rounded-4 p-3 h-100">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h6 class="fw-semibold mb-0">{{ address.label }}</h6>
+                                            {% if address.is_default %}<span class="badge bg-success">Default</span>{% endif %}
+                                        </div>
+                                        <p class="mb-1 fw-medium">{{ address.full_name }}</p>
+                                        <p class="small text-muted mb-3">{{ address.full_address }}</p>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            {% if not address.is_default %}
+                                                <form method="post" action="{% url 'accounts:set_default_address' address.pk %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-sm btn-outline-primary">Set Default</button>
+                                                </form>
+                                            {% endif %}
+                                            <form method="post" action="{% url 'accounts:delete_address' address.pk %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <p class="text-muted">No addresses saved yet. Add one below.</p>
+                            {% endfor %}
+                        </div>
+                        <hr class="my-4">
+                        <h5 class="fw-semibold mb-3">Add New Address</h5>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="address">
+                            <div class="row">
+                                {% for field in address_form %}
+                                    <div class="col-md-6 {% if field.name == 'address_line_1' or field.name == 'address_line_2' %}col-12{% endif %}">
+                                        <div class="mb-3">
+                                            <label class="form-label">{{ field.label }}</label>
+                                            {{ field }}
+                                            {% if field.errors %}<div class="text-danger small">{{ field.errors|join:", " }}</div>{% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button class="btn btn-warning" type="submit">Save Address</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="fw-semibold mb-3">Recent Orders</h4>
+                        {% for order in recent_orders %}
+                            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                <div>
+                                    <p class="mb-1 fw-medium">{{ order.order_number }}</p>
+                                    <small class="text-muted">{{ order.placed_at|date:"d M Y, h:i A" }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <p class="mb-1 fw-semibold">Rs. {{ order.total_amount }}</p>
+                                    <a href="{% url 'orders:order_detail' order.order_number %}" class="small">View details</a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted mb-0">No orders placed yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

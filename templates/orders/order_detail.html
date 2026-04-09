@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ order.order_number }} | ShopSphere{% endblock %}
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="fw-bold mb-1">Order {{ order.order_number }}</h1>
+                <p class="text-muted mb-0">Placed on {{ order.placed_at|date:"d M Y, h:i A" }}</p>
+            </div>
+            <a href="{% url 'orders:my_orders' %}" class="btn btn-outline-primary">Back to Orders</a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="fw-semibold mb-3">Ordered Items</h4>
+                        {% for item in order.items.all %}
+                            <div class="d-flex justify-content-between border-bottom py-3">
+                                <div>
+                                    <h6 class="mb-1">{{ item.product_name }}</h6>
+                                    <small class="text-muted">Quantity: {{ item.quantity }}</small>
+                                </div>
+                                <span class="fw-semibold">Rs. {{ item.total_price }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="fw-semibold mb-3">Order Summary</h4>
+                        <div class="d-flex justify-content-between mb-2"><span>Status</span><span>{{ order.get_status_display }}</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Payment</span><span>{{ order.get_payment_method_display }}</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span>Rs. {{ order.subtotal }}</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Shipping</span><span>Rs. {{ order.shipping_cost }}</span></div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold"><span>Total</span><span>Rs. {{ order.total_amount }}</span></div>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="fw-semibold mb-3">Shipping Address</h4>
+                        <p class="mb-1 fw-medium">{{ order.full_name }}</p>
+                        <p class="mb-1 text-muted">{{ order.address_line_1 }}</p>
+                        {% if order.address_line_2 %}<p class="mb-1 text-muted">{{ order.address_line_2 }}</p>{% endif %}
+                        <p class="mb-1 text-muted">{{ order.city }}, {{ order.state }} - {{ order.postal_code }}</p>
+                        <p class="mb-1 text-muted">{{ order.country }}</p>
+                        <p class="mb-0 text-muted">{{ order.phone_number }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

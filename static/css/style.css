@@ -1,0 +1,161 @@
+:root {
+    --primary-color: #0f4c81;
+    --secondary-color: #f7a928;
+    --accent-color: #edf4fb;
+    --text-dark: #1d2939;
+    --soft-bg: #f8fafc;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #ffffff;
+    color: var(--text-dark);
+}
+
+.page-wrapper {
+    min-height: 70vh;
+}
+
+.app-navbar {
+    background: linear-gradient(120deg, #0f4c81, #164e63);
+}
+
+.nav-search {
+    width: min(420px, 100%);
+}
+
+.hero-section {
+    background:
+        radial-gradient(circle at top right, rgba(247, 169, 40, 0.25), transparent 20%),
+        linear-gradient(180deg, #f4f8fc, #ffffff);
+}
+
+.hero-panel,
+.category-card,
+.stat-card,
+.summary-box,
+.info-tile {
+    border-radius: 24px;
+    background: #fff;
+    padding: 1.5rem;
+}
+
+.hero-panel {
+    border: 1px solid rgba(15, 76, 129, 0.08);
+}
+
+.info-tile {
+    background: var(--accent-color);
+}
+
+.info-tile.large {
+    background: linear-gradient(135deg, rgba(15, 76, 129, 0.12), rgba(247, 169, 40, 0.18));
+}
+
+.info-tile h3,
+.stat-card h3 {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.category-card {
+    border: 1px solid rgba(15, 76, 129, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    min-height: 180px;
+}
+
+.category-card:hover,
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 1rem 2rem rgba(15, 76, 129, 0.12);
+}
+
+.product-image-wrap {
+    height: 220px;
+    overflow: hidden;
+    border-radius: 1rem 1rem 0 0;
+}
+
+.product-card img,
+.product-detail-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder-product {
+    min-height: 220px;
+    background: linear-gradient(135deg, #dbeafe, #fff7ed);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.detail-placeholder {
+    min-height: 450px;
+}
+
+.product-card {
+    border-radius: 1rem;
+}
+
+.card {
+    border-radius: 1rem;
+}
+
+.btn {
+    border-radius: 0.8rem;
+    font-weight: 500;
+}
+
+.form-control,
+.form-select {
+    border-radius: 0.8rem;
+    padding: 0.72rem 0.95rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: rgba(15, 76, 129, 0.45);
+    box-shadow: 0 0 0 0.2rem rgba(15, 76, 129, 0.12);
+}
+
+.quantity-input {
+    max-width: 110px;
+}
+
+.stat-card,
+.summary-box {
+    background: var(--soft-bg);
+    height: 100%;
+}
+
+.stat-card p,
+.summary-box p {
+    margin-bottom: 0;
+    color: #667085;
+}
+
+.footer-section {
+    background: #0f172a;
+    color: #fff;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: #cbd5e1;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+}
+
+.section-heading p,
+.text-muted {
+    color: #667085 !important;
+}
+
+@media (max-width: 991px) {
+    .hero-panel {
+        margin-top: 1rem;
+    }
+}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | ShopSphere{% endblock %}
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="fw-bold">Admin Dashboard</h1>
+                <p class="text-muted mb-0">Quick operational overview for products, orders, and inventory.</p>
+            </div>
+            <a href="/admin/" class="btn btn-primary">Open Django Admin</a>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-6 col-lg-3"><div class="stat-card"><h3>{{ dashboard_data.total_products }}</h3><p>Total Products</p></div></div>
+            <div class="col-md-6 col-lg-3"><div class="stat-card"><h3>{{ dashboard_data.total_categories }}</h3><p>Total Categories</p></div></div>
+            <div class="col-md-6 col-lg-3"><div class="stat-card"><h3>{{ dashboard_data.total_orders }}</h3><p>Total Orders</p></div></div>
+            <div class="col-md-6 col-lg-3"><div class="stat-card"><h3>Rs. {{ dashboard_data.revenue }}</h3><p>Total Revenue</p></div></div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-6 col-lg-3"><div class="stat-card"><h3>{{ dashboard_data.total_users }}</h3><p>Registered Users</p></div></div>
+            <div class="col-md-6 col-lg-3"><div class="stat-card"><h3>{{ dashboard_data.pending_orders }}</h3><p>Pending Orders</p></div></div>
+            <div class="col-md-6 col-lg-3"><a href="/admin/products/product/" class="stat-card text-decoration-none d-block"><h3>Catalog</h3><p>Manage Products</p></a></div>
+            <div class="col-md-6 col-lg-3"><a href="/admin/orders/order/" class="stat-card text-decoration-none d-block"><h3>Orders</h3><p>Manage Orders</p></a></div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h4 class="fw-semibold mb-3">Latest Orders</h4>
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Order No.</th>
+                                        <th>Customer</th>
+                                        <th>Status</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in latest_orders %}
+                                        <tr>
+                                            <td>{{ order.order_number }}</td>
+                                            <td>{{ order.user.username }}</td>
+                                            <td><span class="badge bg-primary-subtle text-primary">{{ order.get_status_display }}</span></td>
+                                            <td>Rs. {{ order.total_amount }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr><td colspan="4" class="text-center text-muted">No orders yet.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h4 class="fw-semibold mb-3">Low Stock Alerts</h4>
+                        {% for product in low_stock_products %}
+                            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                <div>
+                                    <h6 class="mb-1">{{ product.name }}</h6>
+                                    <small class="text-muted">{{ product.category.name }}</small>
+                                </div>
+                                <span class="badge bg-warning text-dark">{{ product.stock }} left</span>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted mb-0">No low stock products right now.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

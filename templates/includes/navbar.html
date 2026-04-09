@@ -1,0 +1,69 @@
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top app-navbar">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'core:home' %}">ShopSphere</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <form class="d-flex ms-lg-4 my-3 my-lg-0 nav-search" method="get" action="{% url 'products:product_list' %}">
+                <input class="form-control me-2" type="search" name="q" placeholder="Search products">
+                <button class="btn btn-warning" type="submit">Search</button>
+            </form>
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'products:product_list' %}">Shop</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Categories</a>
+                    <ul class="dropdown-menu">
+                        {% for category in nav_categories %}
+                            <li><a class="dropdown-item" href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
+                        {% empty %}
+                            <li><span class="dropdown-item-text text-muted">No categories yet</span></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link position-relative" href="{% url 'wishlist:wishlist_detail' %}">
+                        Wishlist
+                        {% if wishlist_items_count %}
+                            <span class="badge rounded-pill bg-warning text-dark">{{ wishlist_items_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link position-relative" href="{% url 'cart:cart_detail' %}">
+                        Cart
+                        {% if cart_items_count %}
+                            <span class="badge rounded-pill bg-warning text-dark">{{ cart_items_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            {{ request.user.first_name|default:request.user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'orders:my_orders' %}">My Orders</a></li>
+                            {% if request.user.is_staff %}
+                                <li><a class="dropdown-item" href="{% url 'core:dashboard' %}">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="/admin/">Django Admin</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'accounts:logout' %}">
+                                    {% csrf_token %}
+                                    <button class="dropdown-item" type="submit">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="btn btn-outline-light me-2" href="{% url 'accounts:login' %}">Login</a></li>
+                    <li class="nav-item"><a class="btn btn-warning" href="{% url 'accounts:register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
